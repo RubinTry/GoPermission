@@ -1,0 +1,3 @@
+include ':GoPermission'
+include ':app'
+rootProject.name = "GoPermission"
