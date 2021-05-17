@@ -1,11 +1,12 @@
-package cn.rubintry.gopermission
+package cn.rubintry.demo
 
 import android.Manifest
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import cn.rubintry.gopermission.Callback
+import cn.rubintry.gopermission.GoPermission
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,19 +37,15 @@ class MainActivity : AppCompatActivity() {
 //                .request()
 //        }
 
-        GoPermission.permissions(*arrayOf(Manifest.permission.CAMERA))
-            .callback(object :
-                Callback {
+        GoPermission
+            .permissions(*arrayOf(Manifest.permission.CAMERA))
+            .callback(object : Callback {
                 override fun onAllGrant() {
-
+                    Log.d("TAG", "onAllGrant: ")
                 }
 
                 override fun onDenied(permissions: Array<String>) {
-                    for (permission in permissions) {
-                        Log.d(this@MainActivity.javaClass.simpleName, "onDenied: ${permission}")
-                    }
-                    val intent = Intent(this@MainActivity, SecondActivity::class.java)
-                    startActivity(intent)
+                    Log.d("TAG", "onDenied: ")
                 }
 
             })

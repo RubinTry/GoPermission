@@ -17,7 +17,9 @@ class PermissionFragment : Fragment() {
         this@PermissionFragment.mPermissions = permissions
         this@PermissionFragment.callback = callback
         mutex.withLock {
-            requestPermissions(permissions , 1)
+            if(permissions.isNotEmpty()){
+                requestPermissions(permissions , 1)
+            }
             index++
             Log.d("TAG", "requestNow: ${index}")
         }

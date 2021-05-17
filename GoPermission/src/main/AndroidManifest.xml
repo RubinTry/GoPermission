@@ -3,9 +3,6 @@
     package="cn.rubintry.gopermission">
 
     <application>
-        <activity android:name=".PermissionActivity"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <provider
             android:authorities="${applicationId}.utilcode.provider"

@@ -1,4 +1,4 @@
-package cn.rubintry.gopermission;
+package cn.rubintry.demo;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.jetbrains.annotations.NotNull;
+
+import cn.rubintry.gopermission.Callback;
+import cn.rubintry.gopermission.GoPermission;
 
 public class SecondActivity extends AppCompatActivity {
 
