@@ -17,11 +17,11 @@ class Utils {
         }
 
         @JvmStatic
-        fun getApplicationContext():Context{
+        fun getApp():Application{
             if(app == null){
                 throw IllegalArgumentException("Context must not be null")
             }
-            return app?.applicationContext!!
+            return app!!
         }
     }
 }
