@@ -23,16 +23,11 @@ public class SecondActivity extends AppCompatActivity {
 
     public void requestPermission(View view) {
         GoPermission.permissions(Manifest.permission.BLUETOOTH)
-                .callback(new Callback() {
+                .request(new Callback() {
                     @Override
-                    public void onAllGrant() {
-                        Log.d("TAG", "onAllGrant: ");
+                    public void onResult(boolean allGrant, @NotNull String[] grantedPermissions, @NotNull String[] deniedPermissions) {
+                        Log.d("TAG", "onResult: ");
                     }
-
-                    @Override
-                    public void onDenied(@NotNull String[] permissions) {
-                        Log.d("TAG", "onDenied: ");
-                    }
-                }).request();
+                });
     }
 }

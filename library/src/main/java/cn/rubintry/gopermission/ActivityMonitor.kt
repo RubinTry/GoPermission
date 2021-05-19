@@ -28,6 +28,8 @@ class ActivityMonitor {
 
     private val callback = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            topActivity = activity
+            GoPermission.initialize()
         }
 
         override fun onActivityStarted(activity: Activity) {

@@ -8,10 +8,10 @@ import kotlin.system.measureTimeMillis
 object GoPermission {
 
     private var permission: MutableList<String> = mutableListOf()
-    private var callback : Callback ?= null
     @JvmStatic
     fun initialize() {
         val curActivity = ActivityMonitor.getInstance().topActivity
+        checkNotNull(curActivity){"Top Activity is null"}
         if (curActivity !is FragmentActivity) {
             throw IllegalArgumentException("Activity must be FragmentActivity")
         }
@@ -34,21 +34,14 @@ object GoPermission {
         return this
     }
 
-    @JvmStatic
-    fun callback(callback: Callback): GoPermission {
-        this.callback = callback
-        return this
-    }
-
 
     /**
      * 发起权限请求
      *
      */
-    @JvmStatic
-    fun request() = runBlocking {
+    fun request(callback: Callback) = runBlocking {
         measureMethodTime {
-            requestPermission()
+            requestPermission(callback)
         }
     }
 
@@ -58,7 +51,7 @@ object GoPermission {
      * 请求权限
      *
      */
-    private fun requestPermission() {
+    private fun requestPermission(callback: Callback) {
         val curActivity = ActivityMonitor.getInstance().topActivity
         if (curActivity !is FragmentActivity) {
             throw IllegalArgumentException("Activity must be FragmentActivity")

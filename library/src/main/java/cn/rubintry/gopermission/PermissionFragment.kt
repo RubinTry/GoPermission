@@ -12,7 +12,6 @@ class PermissionFragment : Fragment() {
     private var mPermissions: Array<String>? = null
     private var callback: Callback? = null
     private var mutex = Mutex()
-    private var index = 0
     fun requestNow(permissions: Array<String>, callback: Callback?) = runBlocking {
         this@PermissionFragment.mPermissions = permissions
         this@PermissionFragment.callback = callback
@@ -20,8 +19,6 @@ class PermissionFragment : Fragment() {
             if(permissions.isNotEmpty()){
                 requestPermissions(permissions , 1)
             }
-            index++
-            Log.d("TAG", "requestNow: ${index}")
         }
     }
 
@@ -35,6 +32,7 @@ class PermissionFragment : Fragment() {
 
         if (requestCode == 1) {
             val deniedPermission = mutableListOf<String>()
+            val grantedPermission = mutableListOf<String>()
             if (permissions.isNotEmpty()) {
                 //将收到的结果分成已授予和未授予两类
                 var allGranted = true
@@ -47,14 +45,11 @@ class PermissionFragment : Fragment() {
                     ) {
                         allGranted = false
                         deniedPermission.add(permission)
+                    }else{
+                        grantedPermission.add(permission)
                     }
                 }
-                if (allGranted) {
-                    callback?.onAllGrant()
-                }
-                if (deniedPermission.isNotEmpty()) {
-                    callback?.onDenied(deniedPermission.toTypedArray())
-                }
+                callback?.onResult(allGranted , grantedPermission.toTypedArray() , deniedPermission.toTypedArray())
             }
         }
 
