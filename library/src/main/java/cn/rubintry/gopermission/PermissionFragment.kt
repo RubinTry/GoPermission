@@ -1,8 +1,5 @@
 package cn.rubintry.gopermission
 
-import android.content.pm.PackageManager
-import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -12,6 +9,13 @@ class PermissionFragment : Fragment() {
     private var mPermissions: Array<String>? = null
     private var callback: Callback? = null
     private var mutex = Mutex()
+
+    /**
+     * 立即请求权限
+     *
+     * @param permissions 要请求的权限
+     * @param callback
+     */
     fun requestNow(permissions: Array<String>, callback: Callback?) = runBlocking {
         this@PermissionFragment.mPermissions = permissions
         this@PermissionFragment.callback = callback
@@ -37,16 +41,11 @@ class PermissionFragment : Fragment() {
                 //将收到的结果分成已授予和未授予两类
                 var allGranted = true
                 permissions.forEach { permission ->
-
-                    if (ActivityCompat.checkSelfPermission(
-                            activity!!,
-                            permission
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
+                    if (GoPermission.isGranted(permission)) {
+                        grantedPermission.add(permission)
+                    }else{
                         allGranted = false
                         deniedPermission.add(permission)
-                    }else{
-                        grantedPermission.add(permission)
                     }
                 }
                 callback?.onResult(allGranted , grantedPermission.toTypedArray() , deniedPermission.toTypedArray())

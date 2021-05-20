@@ -1,6 +1,5 @@
 package cn.rubintry.gopermission
 
-
 import android.app.Application
 
 class Utils {

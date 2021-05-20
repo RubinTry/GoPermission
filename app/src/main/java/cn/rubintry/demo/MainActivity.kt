@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import cn.rubintry.gopermission.Callback
 import cn.rubintry.gopermission.GoPermission
 
@@ -16,8 +17,10 @@ class MainActivity : AppCompatActivity() {
         GoPermission
                 .permissions(*arrayOf(Manifest.permission.CAMERA))
                 .request { allGrant, grantedPermissions, deniedPermissions ->
-                    Log.d("TAG", "onGrant: ${allGrant}")
-                    startActivity(Intent(this@MainActivity , SecondActivity::class.java))
+                    if(allGrant){
+                        Toast.makeText(this, "All permissions granted", Toast.LENGTH_SHORT).show()
+                        Log.d("TAG", "allGrant: ${allGrant}")
+                    }
                 }
     }
 
