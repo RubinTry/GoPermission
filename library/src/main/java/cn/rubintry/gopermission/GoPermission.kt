@@ -1,19 +1,18 @@
 package cn.rubintry.gopermission
 
 import android.content.pm.PackageManager
-import android.util.Log
+
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.*
 import kotlin.system.measureTimeMillis
 
 object GoPermission {
-    private val TAG = "GoPermission"
     private var permission: MutableList<String> = mutableListOf()
 
     @JvmStatic
     fun initialize() {
-        val curActivity = ActivityMonitor.getInstance().topActivity
+        val curActivity = ActivityMonitor.getInstance().getTopActivity()
         checkNotNull(curActivity) { "Top Activity is null" }
         if (curActivity !is FragmentActivity) {
             throw IllegalArgumentException("Activity must be FragmentActivity")
@@ -23,7 +22,7 @@ object GoPermission {
         if (curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name) == null) {
             val fragment = PermissionFragment()
             curActivity.supportFragmentManager.beginTransaction()
-                .add(fragment, PermissionFragment::class.java.name).attach(fragment).commit()
+                    .add(fragment, PermissionFragment::class.java.name).attach(fragment).commit()
         }
     }
 
@@ -49,8 +48,8 @@ object GoPermission {
     @JvmStatic
     fun isGranted(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(
-            Utils.getApp(),
-            permission
+                Utils.getApp(),
+                permission
         ) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -64,7 +63,7 @@ object GoPermission {
             requestPermission(callback)
         }
 
-        Log.d(TAG, "方法调用耗时:${time / 1000f}秒 ")
+        LogUtils.debug("方法调用耗时:${time / 1000f}秒 ")
     }
 
 
@@ -73,14 +72,14 @@ object GoPermission {
      *
      */
     private fun requestPermission(callback: Callback) {
-        val curActivity = ActivityMonitor.getInstance().topActivity
+        val curActivity = ActivityMonitor.getInstance().getTopActivity()
         if (curActivity !is FragmentActivity) {
             throw IllegalArgumentException("Activity must be FragmentActivity")
         }
 
         //用创建好的全透明无背景的fragment进行权限请求
         val existFragment =
-            curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name)
+                curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name)
         if (existFragment != null && existFragment is PermissionFragment) {
             existFragment.requestNow(permission.toTypedArray(), callback)
         }
@@ -103,8 +102,5 @@ object GoPermission {
     }
 
 
-    private fun permissionGroup(){
-        Utils.getApp().packageManager.getPermissionInfo()
-    }
 
 }

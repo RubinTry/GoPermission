@@ -2,7 +2,7 @@ package cn.rubintry.demo;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.util.Log;
+;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import cn.rubintry.gopermission.Callback;
 import cn.rubintry.gopermission.GoPermission;
+import cn.rubintry.gopermission.LogUtils;
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -26,7 +27,7 @@ public class SecondActivity extends AppCompatActivity {
                 .request(new Callback() {
                     @Override
                     public void onResult(boolean allGrant, @NotNull String[] grantedPermissions, @NotNull String[] deniedPermissions) {
-                        Log.d("TAG", "onResult: ");
+                        LogUtils.debug("onResult");
                     }
                 });
     }
