@@ -1,4 +1,4 @@
-package cn.rubintry.gopermission
+package cn.rubintry.gopermission.utils
 
 import android.app.Application
 import androidx.core.content.FileProvider

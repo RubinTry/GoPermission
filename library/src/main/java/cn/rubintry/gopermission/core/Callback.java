@@ -1,4 +1,4 @@
-package cn.rubintry.gopermission;
+package cn.rubintry.gopermission.core;
 
 import org.jetbrains.annotations.NotNull;
 

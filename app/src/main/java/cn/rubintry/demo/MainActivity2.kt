@@ -14,10 +14,10 @@ class MainActivity2 : AppCompatActivity() {
 
         GoPermission
             .permissions(*arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            .request { allGrant, grantedPermissions, deniedPermissions ->
+            .request { allGrant, grantedPermissions , deniedPermissions ->
                 if (allGrant) {
                     Toast.makeText(this, "All permissions granted", Toast.LENGTH_SHORT).show()
-                    LogUtils.debug("allGrant: ${allGrant}")
+                    LogUtils.debug("allGrant: $allGrant")
                 } else {
                     Toast.makeText(this, "您拒绝了一些权限，将导致部分功能无法正常使用", Toast.LENGTH_SHORT).show()
                     for (deniedPermission in deniedPermissions) {

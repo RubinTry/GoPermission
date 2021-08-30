@@ -1,4 +1,4 @@
-package cn.rubintry.gopermission
+package cn.rubintry.gopermission.utils
 
 import android.util.Log
 

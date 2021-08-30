@@ -1,6 +1,7 @@
-package cn.rubintry.gopermission
+package cn.rubintry.gopermission.utils
 
 import android.content.pm.ApplicationInfo
+import cn.rubintry.gopermission.isSpace
 
 object AppUtils {
 

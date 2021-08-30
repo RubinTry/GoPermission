@@ -6,7 +6,7 @@
 
         <provider
             android:authorities="${applicationId}.utilcode.provider"
-            android:name=".UtilFileProvider"
+            android:name=".utils.UtilFileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

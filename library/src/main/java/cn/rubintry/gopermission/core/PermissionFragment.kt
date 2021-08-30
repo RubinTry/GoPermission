@@ -1,4 +1,4 @@
-package cn.rubintry.gopermission
+package cn.rubintry.gopermission.core
 
 import androidx.fragment.app.Fragment
 import kotlinx.coroutines.*

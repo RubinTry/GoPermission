@@ -1,8 +1,10 @@
-package cn.rubintry.gopermission
+package cn.rubintry.gopermission.core
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import cn.rubintry.gopermission.utils.LogUtils
+import cn.rubintry.gopermission.notContains
 import java.util.*
 
 

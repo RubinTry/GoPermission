@@ -1,34 +1,29 @@
 package cn.rubintry.demo;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.Manifest;
 import android.os.Bundle;
-;
-import android.view.View;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.jetbrains.annotations.NotNull;
 
 import cn.rubintry.gopermission.Callback;
 import cn.rubintry.gopermission.GoPermission;
-import cn.rubintry.gopermission.LogUtils;
 
 
-public class SecondActivity extends AppCompatActivity {
+public class MainActivity4 extends AppCompatActivity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
-    }
+        setContentView(R.layout.activity_main4);
 
-    public void requestPermission(View view) {
-        GoPermission.permissions(Manifest.permission.BLUETOOTH)
+        GoPermission
+                .permissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .request(new Callback() {
                     @Override
                     public void onResult(boolean allGrant, @NotNull String[] grantedPermissions, @NotNull String[] deniedPermissions) {
-                        LogUtils.debug("onResult");
+
                     }
                 });
     }

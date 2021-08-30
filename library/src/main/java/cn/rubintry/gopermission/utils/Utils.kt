@@ -1,6 +1,7 @@
-package cn.rubintry.gopermission
+package cn.rubintry.gopermission.utils
 
 import android.app.Application
+import cn.rubintry.gopermission.core.ActivityMonitor
 
 class Utils {
 
@@ -9,7 +10,7 @@ class Utils {
         private var app: Application ?= null
         @JvmStatic
         fun init(app: Application){
-            this.app = app
+            Companion.app = app
             ActivityMonitor.getInstance().unRegister(app)
             ActivityMonitor.getInstance().register(app)
         }

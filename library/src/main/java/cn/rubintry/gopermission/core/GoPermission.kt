@@ -1,9 +1,11 @@
-package cn.rubintry.gopermission
+package cn.rubintry.gopermission.core
 
 import android.content.pm.PackageManager
 
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import cn.rubintry.gopermission.utils.LogUtils
+import cn.rubintry.gopermission.utils.Utils
 import kotlinx.coroutines.*
 import kotlin.system.measureTimeMillis
 
@@ -34,7 +36,7 @@ object GoPermission {
             }
         }
         permission.clear()
-        this.permission.addAll(permissions)
+        permission.addAll(permissions)
         return this
     }
 
