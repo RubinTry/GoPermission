@@ -79,7 +79,7 @@ class ActivityMonitor {
     /**
      * 获取栈顶activity
      */
-    fun getTopActivity(): Activity{
-        return linkedList.last()
+    fun getTopActivity(): Activity?{
+        return linkedList.lastOrNull()
     }
 }

@@ -1,0 +1,5 @@
+
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group='cn.rubintry.gopermission'
