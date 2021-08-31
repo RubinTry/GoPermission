@@ -8,11 +8,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.jetbrains.annotations.NotNull;
 
-import cn.rubintry.gopermission.core.Callback;
-import cn.rubintry.gopermission.core.GoPermission;
-import cn.rubintry.gopermission.utils.LogUtils;
 
 
 public class SecondActivity extends AppCompatActivity {
