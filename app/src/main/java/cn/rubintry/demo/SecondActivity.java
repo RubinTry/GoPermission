@@ -10,9 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.jetbrains.annotations.NotNull;
 
-import cn.rubintry.gopermission.Callback;
-import cn.rubintry.gopermission.GoPermission;
-import cn.rubintry.gopermission.LogUtils;
+import cn.rubintry.gopermission.core.Callback;
+import cn.rubintry.gopermission.core.GoPermission;
+import cn.rubintry.gopermission.utils.LogUtils;
 
 
 public class SecondActivity extends AppCompatActivity {
@@ -24,12 +24,6 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void requestPermission(View view) {
-        GoPermission.permissions(Manifest.permission.BLUETOOTH)
-                .request(new Callback() {
-                    @Override
-                    public void onResult(boolean allGrant, @NotNull String[] grantedPermissions, @NotNull String[] deniedPermissions) {
-                        LogUtils.debug("onResult");
-                    }
-                });
+
     }
 }

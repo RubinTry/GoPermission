@@ -35,7 +35,7 @@ class ActivityMonitor {
             if(linkedList.notContains(activity)){
                 linkedList.add(activity)
             }
-
+            GoPermission.initialize()
             LogUtils.debug("onActivityCreated : ${activity.javaClass.simpleName}")
 
         }
@@ -84,4 +84,6 @@ class ActivityMonitor {
     fun getTopActivity(): Activity?{
         return linkedList.lastOrNull()
     }
+
+
 }

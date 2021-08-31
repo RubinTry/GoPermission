@@ -7,8 +7,8 @@ import android.os.Bundle;
 
 import org.jetbrains.annotations.NotNull;
 
-import cn.rubintry.gopermission.Callback;
-import cn.rubintry.gopermission.GoPermission;
+import cn.rubintry.gopermission.core.Callback;
+import cn.rubintry.gopermission.core.GoPermission;
 
 
 public class MainActivity4 extends AppCompatActivity {

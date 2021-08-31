@@ -16,15 +16,17 @@ object GoPermission {
     fun initialize() {
         val curActivity = ActivityMonitor.getInstance().getTopActivity()
         checkNotNull(curActivity) { "Top Activity is null" }
-        if (curActivity !is FragmentActivity) {
-            throw IllegalArgumentException("Activity must be FragmentActivity")
-        }
+        if(curActivity.javaClass.name.contains(Utils.getApp().packageName)){
+            if (curActivity !is FragmentActivity) {
+                throw IllegalArgumentException("Activity must be FragmentActivity")
+            }
 
-        //用栈顶activity来创建一个可复用的fragment
-        if (curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name) == null) {
-            val fragment = PermissionFragment()
-            curActivity.supportFragmentManager.beginTransaction()
+            //用栈顶activity来创建一个可复用的fragment
+            if (curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name) == null) {
+                val fragment = PermissionFragment()
+                curActivity.supportFragmentManager.beginTransaction()
                     .add(fragment, PermissionFragment::class.java.name).attach(fragment).commit()
+            }
         }
     }
 
@@ -80,8 +82,10 @@ object GoPermission {
         }
 
         //用创建好的全透明无背景的fragment进行权限请求
-        val existFragment =
+        var existFragment =
                 curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name)
+
+
         if (existFragment != null && existFragment is PermissionFragment) {
             existFragment.requestNow(permission.toTypedArray(), callback)
         }

@@ -4,8 +4,8 @@ import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import cn.rubintry.gopermission.GoPermission
-import cn.rubintry.gopermission.LogUtils
+import cn.rubintry.gopermission.core.GoPermission
+import cn.rubintry.gopermission.utils.LogUtils
 
 class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
