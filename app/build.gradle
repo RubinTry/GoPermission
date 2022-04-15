@@ -46,4 +46,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 //    implementation 'com.gitee.rubintry:GoPermission:v1.0.7'
 //    implementation 'com.github.rubintry:GoPermission:v1.0.6'
+//    implementation 'com.gitee.rubintry:GoPermission:v1.0.8'
 }

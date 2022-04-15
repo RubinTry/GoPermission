@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven'
 }
 apply from: 'jitpack.gradle'
 
@@ -33,6 +34,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -44,7 +46,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+
+    def room_version = "2.4.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor  "androidx.room:room-compiler:$room_version"
 }

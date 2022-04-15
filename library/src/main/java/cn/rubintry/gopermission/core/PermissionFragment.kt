@@ -1,6 +1,7 @@
 package cn.rubintry.gopermission.core
 
 import androidx.fragment.app.Fragment
+import cn.rubintry.gopermission.utils.SpUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -21,6 +22,7 @@ class PermissionFragment : Fragment() {
         this@PermissionFragment.callback = callback
         mutex.withLock {
             if(permissions.isNotEmpty()){
+
                 requestPermissions(permissions , 1)
             }
         }

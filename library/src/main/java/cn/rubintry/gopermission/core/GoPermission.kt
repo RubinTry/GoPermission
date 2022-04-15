@@ -4,22 +4,19 @@ import android.content.pm.PackageManager
 
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import cn.rubintry.gopermission.utils.LogUtils
 import cn.rubintry.gopermission.utils.Utils
-import kotlinx.coroutines.*
-import kotlin.system.measureTimeMillis
 
 object GoPermission {
+    private  var beforeRequestCallback: BeforeRequestCallback ?= null
     private var permission: MutableList<String> = mutableListOf()
+
+    private var isPermissionsInvoke = false
 
     @JvmStatic
     fun initialize() {
         val curActivity = ActivityMonitor.getInstance().getTopActivity()
         checkNotNull(curActivity) { "Top Activity is null" }
-        if(curActivity.javaClass.name.contains(Utils.getApp().packageName)){
-            if (curActivity !is FragmentActivity) {
-                throw IllegalArgumentException("Activity must be FragmentActivity")
-            }
+        if(curActivity.javaClass.name.contains(Utils.getApp().packageName) && curActivity is FragmentActivity){
 
             //用栈顶activity来创建一个可复用的fragment
             if (curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name) == null) {
@@ -30,8 +27,16 @@ object GoPermission {
         }
     }
 
+
+    /**
+     * 要请求的权限组（看方法名也该知道了）
+     *
+     * @param permissions
+     * @return
+     */
     @JvmStatic
     fun permissions(vararg permissions: String): GoPermission {
+        isPermissionsInvoke = true
         for (permission in permissions) {
             if (permission.isBlank()) {
                 throw IllegalArgumentException("Permission should not be empty!!!")
@@ -44,6 +49,14 @@ object GoPermission {
 
 
     /**
+     * 权限是否只申请一次
+     *
+     */
+    fun onlyOne(){
+
+    }
+
+    /**
      * 判断权限是否已经授予
      *
      * @param permission
@@ -51,6 +64,7 @@ object GoPermission {
      */
     @JvmStatic
     fun isGranted(permission: String): Boolean {
+        check(isPermissionsInvoke){"Please invoke method permissions() first."}
         return ContextCompat.checkSelfPermission(
                 Utils.getApp(),
                 permission
@@ -62,12 +76,19 @@ object GoPermission {
      * 发起权限请求
      *
      */
-    fun request(callback: Callback) = runBlocking {
-        val time = measureMethodTime {
+    fun request(callback: Callback) {
+        check(isPermissionsInvoke){"Please invoke method permissions() first."}
+        isPermissionsInvoke = false
+        if(null != beforeRequestCallback){
+            //hook一下，以便在我们自定义的弹窗取消后再发起请求
+            AlertDialogHooker.hookCancelListener(beforeRequestCallback?.onBefore()) {
+                //hook成功后我们再发起请求
+                requestPermission(callback)
+            }
+        }else{
             requestPermission(callback)
         }
 
-        LogUtils.debug("方法调用耗时:${time / 1000f}秒 ")
     }
 
 
@@ -82,8 +103,7 @@ object GoPermission {
         }
 
         //用创建好的全透明无背景的fragment进行权限请求
-        var existFragment =
-                curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name)
+        val existFragment = curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name)
 
 
         if (existFragment != null && existFragment is PermissionFragment) {
@@ -93,18 +113,14 @@ object GoPermission {
 
 
     /**
-     * 测量方法耗时
+     * 请求权限之前进行的弹窗提示，用于告知用户权限的具体用途（别说没必要，现在好多机构都在查）
      *
-     * @param action
+     * @param beforeRequestCallback
+     * @return
      */
-    private suspend fun measureMethodTime(action: suspend () -> Unit): Long {
-        return measureTimeMillis {
-            coroutineScope {
-                launch {
-                    action()
-                }
-            }
-        }
+    fun beforeRequest(beforeRequestCallback : BeforeRequestCallback): GoPermission {
+        this.beforeRequestCallback = beforeRequestCallback
+        return this
     }
 
 
