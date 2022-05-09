@@ -1,0 +1,46 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "1a7cbe5692d58d8256e1ff53a8cd662b",
+    "entities": [
+      {
+        "tableName": "go_permission_data",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`permissionName` TEXT NOT NULL, `requestCount` INTEGER NOT NULL, `grantedOnDialog` INTEGER NOT NULL, PRIMARY KEY(`permissionName`))",
+        "fields": [
+          {
+            "fieldPath": "permissionName",
+            "columnName": "permissionName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestCount",
+            "columnName": "requestCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "grantedOnDialog",
+            "columnName": "grantedOnDialog",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "permissionName"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a7cbe5692d58d8256e1ff53a8cd662b')"
+    ]
+  }
+}
