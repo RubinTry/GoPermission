@@ -1,20 +1,28 @@
 package cn.rubintry.gopermission.core
 
 import android.content.pm.PackageManager
-
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import cn.rubintry.gopermission.db.Permission
+import cn.rubintry.gopermission.utils.LogUtils
 import cn.rubintry.gopermission.utils.Utils
+import java.lang.ref.WeakReference
 
 object GoPermission {
-    private  var beforeRequestCallback: BeforeRequestCallback ?= null
+
+    private  var beforeRequestCallback: WeakReference<BeforeRequestCallback> ?= null
+
     private var permission: MutableList<String> = mutableListOf()
 
     private var isPermissionsInvoke = false
 
+    /**
+     * 初始化，该方法会自动调用，无需关心
+     */
     @JvmStatic
-    fun initialize() {
-        val curActivity = ActivityMonitor.getInstance().getTopActivity()
+    internal fun initialize() {
+        //只在栈底的activity中创建PermissionFragment，避免资源浪费
+        val curActivity = ActivityMonitor.getInstance().getBottomActivity()
         checkNotNull(curActivity) { "Top Activity is null" }
         if(curActivity.javaClass.name.contains(Utils.getApp().packageName) && curActivity is FragmentActivity){
 
@@ -49,14 +57,6 @@ object GoPermission {
 
 
     /**
-     * 权限是否只申请一次
-     *
-     */
-    fun onlyOne(){
-
-    }
-
-    /**
      * 判断权限是否已经授予
      *
      * @param permission
@@ -64,7 +64,6 @@ object GoPermission {
      */
     @JvmStatic
     fun isGranted(permission: String): Boolean {
-        check(isPermissionsInvoke){"Please invoke method permissions() first."}
         return ContextCompat.checkSelfPermission(
                 Utils.getApp(),
                 permission
@@ -79,16 +78,7 @@ object GoPermission {
     fun request(callback: Callback) {
         check(isPermissionsInvoke){"Please invoke method permissions() first."}
         isPermissionsInvoke = false
-        if(null != beforeRequestCallback){
-            //hook一下，以便在我们自定义的弹窗取消后再发起请求
-            AlertDialogHooker.hookCancelListener(beforeRequestCallback?.onBefore()) {
-                //hook成功后我们再发起请求
-                requestPermission(callback)
-            }
-        }else{
-            requestPermission(callback)
-        }
-
+        requestPermission(callback)
     }
 
 
@@ -97,19 +87,46 @@ object GoPermission {
      *
      */
     private fun requestPermission(callback: Callback) {
-        val curActivity = ActivityMonitor.getInstance().getTopActivity()
+        val curActivity = ActivityMonitor.getInstance().getBottomActivity()
         if (curActivity !is FragmentActivity) {
             throw IllegalArgumentException("Activity must be FragmentActivity")
         }
-
         //用创建好的全透明无背景的fragment进行权限请求
         val existFragment = curActivity.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name)
 
-
         if (existFragment != null && existFragment is PermissionFragment) {
-            existFragment.requestNow(permission.toTypedArray(), callback)
+            val permissionList = mutableListOf<String>()
+            for (s in permission) {
+                val cachedPermission = PermissionManager.getInstance().db.permissionDao?.findPermissionByName(s)
+                if(null != cachedPermission){
+                    if(cachedPermission.requestCount < 2 && !cachedPermission.grantedOnDialog){
+                        cachedPermission.requestCount ++
+                        PermissionManager.getInstance().db.permissionDao?.insertPermission(cachedPermission)
+                        permissionList.add(cachedPermission.permissionName)
+                    }else{
+                        LogUtils.error("权限${cachedPermission.permissionName}被拒绝次数已超2次，已中断请求")
+                    }
+                }else{
+                    PermissionManager.getInstance().db.permissionDao?.insertPermission(Permission(permissionName = s , requestCount = 1 , false))
+                    permissionList.add(s)
+                }
+            }
+            if(permissionList.isEmpty()){
+                return
+            }
+            if(null != beforeRequestCallback){
+                beforeRequestCallback?.get()?.onBefore()?.setPermissions(permission.toPermissionList())
+                DialogHooker.hookCancelListener(WeakReference(beforeRequestCallback?.get()?.onBefore()), {
+                    existFragment.requestNow(permissionList.toTypedArray(), callback)
+                }, {
+                    callback.onResult(false , emptyArray() , permissionList.toTypedArray())
+                })
+            }else{
+                existFragment.requestNow(permissionList.toTypedArray(), callback)
+            }
         }
     }
+
 
 
     /**
@@ -119,10 +136,22 @@ object GoPermission {
      * @return
      */
     fun beforeRequest(beforeRequestCallback : BeforeRequestCallback): GoPermission {
-        this.beforeRequestCallback = beforeRequestCallback
+        this.beforeRequestCallback = WeakReference(beforeRequestCallback)
         return this
     }
 
 
+    /**
+     * 权限转换
+     *
+     * @return
+     */
+    private fun MutableList<String>.toPermissionList(): MutableList<Permission>{
+        val permissionList = mutableListOf<Permission>()
+        for (p in this) {
+            permissionList.add(Permission(p , 0 ,false))
+        }
+        return permissionList
+    }
 
 }

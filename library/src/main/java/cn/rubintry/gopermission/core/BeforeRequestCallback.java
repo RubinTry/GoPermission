@@ -1,9 +1,9 @@
 package cn.rubintry.gopermission.core;
 
 
-import androidx.appcompat.app.AlertDialog;
+import cn.rubintry.gopermission.widget.IPermissionDialogInterface;
 
 
 public interface BeforeRequestCallback {
-    AlertDialog onBefore();
+    IPermissionDialogInterface onBefore();
 }

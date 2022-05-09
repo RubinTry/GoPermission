@@ -1,5 +1,6 @@
 package cn.rubintry.gopermission.ext
 
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Message
 import androidx.appcompat.app.AlertDialog
@@ -14,7 +15,7 @@ internal fun AlertDialog?.hasCancelListener() : Boolean{
 }
 
 
-internal fun AlertDialog?.getCancelListener() : DialogInterface.OnCancelListener?{
+internal fun Dialog?.getCancelListener() : DialogInterface.OnCancelListener?{
     return try {
         val mCancelMessage = this?.getField<Message>("mCancelMessage")
         val onCancelListener = mCancelMessage?.obj

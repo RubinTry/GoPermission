@@ -41,7 +41,6 @@ class ActivityMonitor {
         }
 
         override fun onActivityStarted(activity: Activity) {
-
             LogUtils.debug("onActivityStarted : ${activity.javaClass.simpleName}")
         }
 
@@ -86,4 +85,7 @@ class ActivityMonitor {
     }
 
 
+    fun getBottomActivity(): Activity?{
+        return linkedList.firstOrNull()
+    }
 }

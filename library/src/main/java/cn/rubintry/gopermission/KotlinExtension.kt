@@ -4,7 +4,7 @@ package cn.rubintry.gopermission
 /**
  * 判断字符串是否为空格
  */
-fun String.isSpace(): Boolean {
+fun String?.isSpace(): Boolean {
     val s = this ?: return true
     var i = 0
     val len = s.length
