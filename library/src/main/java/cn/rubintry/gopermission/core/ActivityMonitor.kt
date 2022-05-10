@@ -3,6 +3,7 @@ package cn.rubintry.gopermission.core
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import cn.rubintry.gopermission.utils.LogUtils
 import cn.rubintry.gopermission.notContains
 import java.util.*
@@ -33,6 +34,14 @@ class ActivityMonitor {
     private val callback = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             if(linkedList.notContains(activity)){
+                for (ac in linkedList) {
+                    if(ac is FragmentActivity){
+                        val fragment = ac.supportFragmentManager.findFragmentByTag(PermissionFragment::class.java.name)
+                        fragment?.let {
+                            ac.supportFragmentManager.beginTransaction().remove(it)
+                        }
+                    }
+                }
                 linkedList.add(activity)
             }
             GoPermission.initialize()

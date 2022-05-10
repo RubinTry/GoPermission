@@ -11,8 +11,6 @@ class DemoDialog private constructor(context: Context, listener: PermissionDialo
     constructor(builder: Builder) : this(builder.getContext())
 
     override fun onViewCreated() {
-        val permissions = getPermissions()
-
 
     }
 

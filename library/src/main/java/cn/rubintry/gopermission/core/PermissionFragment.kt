@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import cn.rubintry.gopermission.notContains
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -20,16 +21,30 @@ class PermissionFragment : Fragment() {
             val deniedPermission = mutableListOf<String>()
             val grantedPermission = mutableListOf<String>()
             if (it.isNotEmpty()) {
-                var allGranted = true
+                var allGranted = false
+                var grantedCount = 0
                 for (permission in it.keys) {
                     //将收到的结果分成已授予和未授予两类
                     if (GoPermission.isGranted(permission)) {
+                        grantedCount ++
                         grantedPermission.add(permission)
                     } else {
-                        allGranted = false
                         deniedPermission.add(permission)
                     }
                 }
+                val cachedPermissions = PermissionManager.getInstance().db.permissionDao?.findAllTarget()
+                cachedPermissions?.let {
+                    for (permission in it) {
+                        if(deniedPermission.notContains(permission.permissionName)){
+                            if(permission.grantedOnDialog){
+                                permission.grantedOnDialog = false
+                                PermissionManager.getInstance().db.permissionDao?.insertPermission(permission)
+                            }
+                            deniedPermission.add(permission.permissionName)
+                        }
+                    }
+                }
+                allGranted = grantedCount == GoPermission.getPermissions().size
                 callback?.onResult(
                     allGranted,
                     grantedPermission.toTypedArray(),

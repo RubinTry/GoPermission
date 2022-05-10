@@ -29,6 +29,10 @@ interface PermissionDao {
     fun delete(permission: Permission)
 
 
+    @Query("DELETE FROM go_permission_data WHERE permissionName = :permissionName")
+    fun deleteByName(permissionName: String)
+
+
     @Query("SELECT * FROM go_permission_data")
     fun findAllTarget(): List<Permission>
 }

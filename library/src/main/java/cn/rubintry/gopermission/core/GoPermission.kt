@@ -21,8 +21,8 @@ object GoPermission {
      */
     @JvmStatic
     internal fun initialize() {
-        //只在栈底的activity中创建PermissionFragment，避免资源浪费
-        val curActivity = ActivityMonitor.getInstance().getBottomActivity()
+        //只在栈顶的activity中创建PermissionFragment，避免资源浪费
+        val curActivity = ActivityMonitor.getInstance().getTopActivity()
         checkNotNull(curActivity) { "Top Activity is null" }
         if(curActivity.javaClass.name.contains(Utils.getApp().packageName) && curActivity is FragmentActivity){
 
@@ -36,6 +36,11 @@ object GoPermission {
     }
 
 
+    internal fun getPermissions(): List<String> {
+        return permission
+    }
+
+
     /**
      * 要请求的权限组（看方法名也该知道了）
      *
@@ -45,13 +50,13 @@ object GoPermission {
     @JvmStatic
     fun permissions(vararg permissions: String): GoPermission {
         isPermissionsInvoke = true
-        for (permission in permissions) {
-            if (permission.isBlank()) {
+        permission.clear()
+        for (p in permissions) {
+            if (p.isBlank()) {
                 throw IllegalArgumentException("Permission should not be empty!!!")
             }
+            permission.add(p)
         }
-        permission.clear()
-        permission.addAll(permissions)
         return this
     }
 
@@ -87,7 +92,7 @@ object GoPermission {
      *
      */
     private fun requestPermission(callback: Callback) {
-        val curActivity = ActivityMonitor.getInstance().getBottomActivity()
+        val curActivity = ActivityMonitor.getInstance().getTopActivity()
         if (curActivity !is FragmentActivity) {
             throw IllegalArgumentException("Activity must be FragmentActivity")
         }
@@ -107,8 +112,10 @@ object GoPermission {
                         LogUtils.error("权限${cachedPermission.permissionName}被拒绝次数已超2次，已中断请求")
                     }
                 }else{
-                    PermissionManager.getInstance().db.permissionDao?.insertPermission(Permission(permissionName = s , requestCount = 1 , false))
-                    permissionList.add(s)
+                    if(!isGranted(s)){
+                        PermissionManager.getInstance().db.permissionDao?.insertPermission(Permission(permissionName = s , requestCount = 1 , false))
+                        permissionList.add(s)
+                    }
                 }
             }
             if(permissionList.isEmpty()){
