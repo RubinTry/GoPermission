@@ -32,24 +32,29 @@ class PermissionFragment : Fragment() {
                         deniedPermission.add(permission)
                     }
                 }
-                val cachedPermissions = PermissionManager.getInstance().db.permissionDao?.findAllTarget()
-                cachedPermissions?.let {
-                    for (permission in it) {
-                        if(deniedPermission.notContains(permission.permissionName)){
-                            if(permission.grantedOnDialog){
-                                permission.grantedOnDialog = false
-                                PermissionManager.getInstance().db.permissionDao?.insertPermission(permission)
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val cachedPermissions = PermissionManager.getInstance().db.permissionDao?.findAllTarget()
+                    cachedPermissions?.let {
+                        for (permission in it) {
+                            if(deniedPermission.notContains(permission.permissionName)){
+                                if(permission.grantedOnDialog){
+                                    permission.grantedOnDialog = false
+                                    PermissionManager.getInstance().db.permissionDao?.insertPermission(permission)
+                                }
+                                deniedPermission.add(permission.permissionName)
                             }
-                            deniedPermission.add(permission.permissionName)
                         }
                     }
+                    allGranted = grantedCount == GoPermission.getPermissions().size
+                    CoroutineScope(Dispatchers.Main).launch {
+                        callback?.onResult(
+                            allGranted,
+                            grantedPermission.toTypedArray(),
+                            deniedPermission.toTypedArray()
+                        )
+                    }
                 }
-                allGranted = grantedCount == GoPermission.getPermissions().size
-                callback?.onResult(
-                    allGranted,
-                    grantedPermission.toTypedArray(),
-                    deniedPermission.toTypedArray()
-                )
             }
         }
     }

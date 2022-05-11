@@ -5,7 +5,7 @@ import android.util.Log
 
 object LogUtils {
 
-    private val TAG= "GoPermission:=============>"
+    private const val TAG= "GoPermission:=============>"
 
     @JvmStatic
     fun debug(msg: String){

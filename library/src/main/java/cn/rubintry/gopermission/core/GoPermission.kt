@@ -6,8 +6,10 @@ import androidx.fragment.app.FragmentActivity
 import cn.rubintry.gopermission.db.Permission
 import cn.rubintry.gopermission.utils.LogUtils
 import cn.rubintry.gopermission.utils.Utils
+import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 
+@DelicateCoroutinesApi
 object GoPermission {
 
     private  var beforeRequestCallback: WeakReference<BeforeRequestCallback> ?= null
@@ -83,7 +85,9 @@ object GoPermission {
     fun request(callback: Callback) {
         check(isPermissionsInvoke){"Please invoke method permissions() first."}
         isPermissionsInvoke = false
-        requestPermission(callback)
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO){
+            requestPermission(callback)
+        }
     }
 
 
@@ -101,6 +105,7 @@ object GoPermission {
 
         if (existFragment != null && existFragment is PermissionFragment) {
             val permissionList = mutableListOf<String>()
+            //过滤掉拒绝过2次以上的权限
             for (s in permission) {
                 val cachedPermission = PermissionManager.getInstance().db.permissionDao?.findPermissionByName(s)
                 if(null != cachedPermission){
@@ -121,14 +126,18 @@ object GoPermission {
             if(permissionList.isEmpty()){
                 return
             }
+            //有beforeRequestCallback，拉起[权限描述弹窗]
             if(null != beforeRequestCallback){
-                beforeRequestCallback?.get()?.onBefore()?.setPermissions(permission.toPermissionList())
-                DialogHooker.hookCancelListener(WeakReference(beforeRequestCallback?.get()?.onBefore()), {
-                    existFragment.requestNow(permissionList.toTypedArray(), callback)
-                }, {
-                    callback.onResult(false , emptyArray() , permissionList.toTypedArray())
-                })
+                CoroutineScope(Dispatchers.Main).launch(Dispatchers.Main){
+                    beforeRequestCallback?.get()?.onBefore()?.setPermissions(permission.toPermissionList())
+                    DialogHooker.hookCancelListener(WeakReference(beforeRequestCallback?.get()?.onBefore()), {
+                        existFragment.requestNow(permissionList.toTypedArray(), callback)
+                    }, {
+                        callback.onResult(false , emptyArray() , permissionList.toTypedArray())
+                    })
+                }
             }else{
+                //没有beforeRequestCallback，直接发起请求
                 existFragment.requestNow(permissionList.toTypedArray(), callback)
             }
         }

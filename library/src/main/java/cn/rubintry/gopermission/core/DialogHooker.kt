@@ -4,6 +4,9 @@ import cn.rubintry.gopermission.PermissionDialogListener
 import cn.rubintry.gopermission.ext.getField
 import cn.rubintry.gopermission.widget.IPermissionDialogInterface
 import cn.rubintry.gopermission.widget.PermissionDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 internal class DialogHooker {
@@ -29,7 +32,9 @@ internal class DialogHooker {
                     dialog.getPermissions().forEach {
                         it.grantedOnDialog = true
                     }
-                    PermissionManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
+                    CoroutineScope(Dispatchers.IO).launch {
+                        PermissionManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
+                    }
                     cachedDialogCancelListener?.onGranted()
                     onGranted.invoke()
                 }
@@ -38,7 +43,9 @@ internal class DialogHooker {
                     dialog.getPermissions().forEach {
                         it.grantedOnDialog = false
                     }
-                    PermissionManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
+                    CoroutineScope(Dispatchers.IO).launch {
+                        PermissionManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
+                    }
                     cachedDialogCancelListener?.onDenied()
                     onDenied.invoke()
                 }
