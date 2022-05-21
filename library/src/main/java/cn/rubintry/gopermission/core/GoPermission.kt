@@ -9,7 +9,7 @@ import cn.rubintry.gopermission.utils.Utils
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 
-@DelicateCoroutinesApi
+
 object GoPermission {
 
     private  var beforeRequestCallback: WeakReference<BeforeRequestCallback> ?= null
@@ -38,6 +38,11 @@ object GoPermission {
     }
 
 
+    /**
+     * 获取权限
+     *
+     * @return
+     */
     internal fun getPermissions(): List<String> {
         return permission
     }
@@ -128,9 +133,9 @@ object GoPermission {
             }
             //有beforeRequestCallback，拉起[权限描述弹窗]
             if(null != beforeRequestCallback){
-                CoroutineScope(Dispatchers.Main).launch(Dispatchers.Main){
-                    beforeRequestCallback?.get()?.onBefore()?.setPermissions(permission.toPermissionList())
-                    DialogHooker.hookCancelListener(WeakReference(beforeRequestCallback?.get()?.onBefore()), {
+                CoroutineScope(Dispatchers.Main).launch{
+                    beforeRequestCallback?.get()?.showDialog()?.setPermissions(permission.toPermissionList())
+                    DialogHooker.hookCancelListener(WeakReference(beforeRequestCallback?.get()?.showDialog()), {
                         existFragment.requestNow(permissionList.toTypedArray(), callback)
                     }, {
                         callback.onResult(false , emptyArray() , permissionList.toTypedArray())

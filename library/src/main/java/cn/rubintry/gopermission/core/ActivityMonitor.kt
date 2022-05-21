@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import cn.rubintry.gopermission.utils.LogUtils
 import cn.rubintry.gopermission.notContains
 import java.util.*
 
@@ -45,31 +44,30 @@ class ActivityMonitor {
                 linkedList.add(activity)
             }
             GoPermission.initialize()
-            LogUtils.debug("onActivityCreated : ${activity.javaClass.simpleName}")
 
         }
 
         override fun onActivityStarted(activity: Activity) {
-            LogUtils.debug("onActivityStarted : ${activity.javaClass.simpleName}")
+
         }
 
         override fun onActivityResumed(activity: Activity) {
-            LogUtils.debug("onActivityResumed : ${activity.javaClass.simpleName}")
+
         }
 
         override fun onActivityPaused(activity: Activity) {
-            LogUtils.debug("onActivityPaused : ${activity.javaClass.simpleName}")
+
         }
 
         override fun onActivityStopped(activity: Activity) {
-            LogUtils.debug("onActivityStopped : ${activity.javaClass.simpleName}")
+
         }
 
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
         }
 
         override fun onActivityDestroyed(activity: Activity) {
-            LogUtils.debug("onActivityDestroyed : ${activity.javaClass.simpleName}")
+
             if(linkedList.contains(activity)){
                 linkedList.remove(activity)
             }

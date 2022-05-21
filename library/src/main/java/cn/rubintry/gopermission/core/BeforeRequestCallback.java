@@ -5,5 +5,5 @@ import cn.rubintry.gopermission.widget.IPermissionDialogInterface;
 
 
 public interface BeforeRequestCallback {
-    IPermissionDialogInterface onBefore();
+    IPermissionDialogInterface showDialog();
 }

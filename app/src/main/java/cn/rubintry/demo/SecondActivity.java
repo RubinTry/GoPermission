@@ -26,18 +26,9 @@ public class SecondActivity extends AppCompatActivity {
     public void requestPermission(View view) {
         GoPermission
                 .permissions()
-                .beforeRequest(new BeforeRequestCallback() {
-                    @Override
-                    public IPermissionDialogInterface onBefore() {
-                        return new DemoDialog.Builder(SecondActivity.this)
-                                .create();
-                    }
-                })
-                .request(new Callback() {
-                    @Override
-                    public void onResult(boolean allGrant, @NonNull String[] grantedPermissions, @NonNull String[] deniedPermissions) {
+                .beforeRequest(() -> new DemoDialog.Builder(SecondActivity.this).create())
+                .request((allGrant, grantedPermissions, deniedPermissions) -> {
 
-                    }
                 });
     }
 }
