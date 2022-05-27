@@ -1,20 +1,25 @@
 package cn.rubintry.gopermission.core
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import cn.rubintry.gopermission.notContains
+import cn.rubintry.gopermission.db.Permission
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PermissionFragment : Fragment() {
     private var launcher: ActivityResultLauncher<Array<String>> ?= null
     private var callback: Callback? = null
+    private var permissionSize: Int = 0
     private var mutex = Mutex()
 
 
+    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         launcher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -23,30 +28,24 @@ class PermissionFragment : Fragment() {
             if (it.isNotEmpty()) {
                 var allGranted = false
                 var grantedCount = 0
-                for (permission in it.keys) {
-                    //将收到的结果分成已授予和未授予两类
-                    if (GoPermission.isGranted(permission)) {
-                        grantedCount ++
-                        grantedPermission.add(permission)
-                    } else {
-                        deniedPermission.add(permission)
-                    }
-                }
-
                 CoroutineScope(Dispatchers.IO).launch {
-                    val cachedPermissions = PermissionManager.getInstance().db.permissionDao?.findAllTarget()
-                    cachedPermissions?.let {
-                        for (permission in it) {
-                            if(deniedPermission.notContains(permission.permissionName)){
-                                if(permission.grantedOnDialog){
-                                    permission.grantedOnDialog = false
-                                    PermissionManager.getInstance().db.permissionDao?.insertPermission(permission)
-                                }
-                                deniedPermission.add(permission.permissionName)
-                            }
+                    for (permission in it.keys) {
+                        //将收到的结果分成已授予和未授予两类
+                        if (GoPermission.isGranted(permission)) {
+                            grantedCount ++
+                            grantedPermission.add(permission)
+                        } else {
+                            deniedPermission.add(permission)
+                        }
+                        try {
+                            val requestTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
+                            DbManager.getInstance().db.permissionDao?.insertPermission(Permission(permission , requestTime , !GoPermission.isGranted(permission)))
+                        }catch (e: Exception){
+                            e.printStackTrace()
                         }
                     }
-                    allGranted = grantedCount == GoPermission.getPermissions().size
+
+                    allGranted = grantedCount == permissionSize
                     CoroutineScope(Dispatchers.Main).launch {
                         callback?.onResult(
                             allGranted,
@@ -72,6 +71,7 @@ class PermissionFragment : Fragment() {
      */
     fun requestNow(permissions: Array<String>, callback: Callback?) = runBlocking {
         this@PermissionFragment.callback = callback
+        this@PermissionFragment.permissionSize = permissions.size
         mutex.withLock {
             if(permissions.isNotEmpty()){
                 launcher?.launch(permissions)

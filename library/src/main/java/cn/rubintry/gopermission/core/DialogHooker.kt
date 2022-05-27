@@ -29,22 +29,16 @@ internal class DialogHooker {
 
             dialog?.setPermissionDialogListener(object : PermissionDialogListener{
                 override fun onGranted() {
-                    dialog.getPermissions().forEach {
-                        it.grantedOnDialog = true
-                    }
                     CoroutineScope(Dispatchers.IO).launch {
-                        PermissionManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
+                        DbManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
                     }
                     cachedDialogCancelListener?.onGranted()
                     onGranted.invoke()
                 }
 
                 override fun onDenied() {
-                    dialog.getPermissions().forEach {
-                        it.grantedOnDialog = false
-                    }
                     CoroutineScope(Dispatchers.IO).launch {
-                        PermissionManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
+                        DbManager.getInstance().db.permissionDao?.insertPermissions(dialog.getPermissions())
                     }
                     cachedDialogCancelListener?.onDenied()
                     onDenied.invoke()

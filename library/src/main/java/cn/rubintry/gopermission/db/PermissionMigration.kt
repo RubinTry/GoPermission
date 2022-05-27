@@ -16,10 +16,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 class PermissionMigration(startVersion: Int, endVersion: Int) : Migration(startVersion, endVersion) {
     override fun migrate(database: SupportSQLiteDatabase) {
         try {
-            database.execSQL("DROP TABLE 'Permission'")
+            database.execSQL("DROP TABLE 'go_permission_data'")
         }catch (e : SQLiteException){
             e.printStackTrace()
         }
-        database.execSQL("CREATE TABLE 'Permission'('permissionName' TEXT NOT NULL , `grantedOnDialog` INTEGER NOT NULL, PRIMARY KEY(`permissionName`))")
+        database.execSQL("CREATE TABLE 'go_permission_data'('permissionName' TEXT NOT NULL , `requestTimeMills` BIGINT NOT NULL, `isDenied` BOOLEAN NOT NULL , PRIMARY KEY(`permissionName`))")
     }
 }

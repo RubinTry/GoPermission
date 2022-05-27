@@ -35,4 +35,5 @@ interface PermissionDao {
 
     @Query("SELECT * FROM go_permission_data")
     fun findAllTarget(): List<Permission>
+
 }

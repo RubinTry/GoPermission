@@ -1,18 +1,12 @@
 package cn.rubintry.demo;
 
-import android.Manifest;
 import android.os.Bundle;
-;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import cn.rubintry.gopermission.core.BeforeRequestCallback;
-import cn.rubintry.gopermission.core.Callback;
 import cn.rubintry.gopermission.core.GoPermission;
-import cn.rubintry.gopermission.widget.IPermissionDialogInterface;
 
 
 public class SecondActivity extends AppCompatActivity {
@@ -25,6 +19,7 @@ public class SecondActivity extends AppCompatActivity {
 
     public void requestPermission(View view) {
         GoPermission
+                .isIntervalMode(false)
                 .permissions()
                 .beforeRequest(() -> new DemoDialog.Builder(SecondActivity.this).create())
                 .request((allGrant, grantedPermissions, deniedPermissions) -> {

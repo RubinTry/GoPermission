@@ -4,7 +4,6 @@ import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import cn.rubintry.gopermission.PermissionDialogListener
 import cn.rubintry.gopermission.core.GoPermission
 import cn.rubintry.gopermission.utils.LogUtils
 
@@ -16,6 +15,7 @@ class MainActivity2 : AppCompatActivity() {
 
 
         GoPermission
+            .isIntervalMode(true)
             .permissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             .beforeRequest {
                 DemoDialog.Builder(this).create()
